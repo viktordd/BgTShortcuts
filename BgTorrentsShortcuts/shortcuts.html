@@ -1,0 +1,10 @@
+<div s-toggle="showIcon" data-ng-click="showShortcuts($event)" class="bgt bgt-shortcuts-icon" style="display: none;"
+        data-ng-class="{ 'top': position.top, 'middle': position.middle, 'bottom': position.bottom, 'left': position.left, 'center': position.center, 'right': position.right }">
+    Shortcuts&nbsp;
+    <span data-ng-click="refresh($event)" data-ng-show="showRefresh" class="ui-state-default ui-corner-all refreshBtn"><span class="ui-icon ui-icon-refresh"></span></span>
+</div>
+<div data-ng-click="$event.stopPropagation()" s-toggle="showHolder" class="bgt bgt-shortcut-holder" style="display: none;"
+     data-ng-class="{ 'top': position.top, 'middle': position.middle, 'bottom': position.bottom, 'left': position.left, 'center': position.center, 'right': position.right }">
+    <span data-ng-click="hideShortcuts()" class="bgt-shortcuts-close-icon">Close</span>
+    <span class="bgt-shortcut" data-ng-repeat="shortcut in shortcuts">[<a data-ng-click="shortcutClick(shortcut)">{{shortcut.Name}}</a>]<br /></span>
+</div>

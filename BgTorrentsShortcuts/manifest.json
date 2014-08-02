@@ -1,0 +1,34 @@
+{
+	"manifest_version": 2,
+
+	"name": "BG Torrents Shortcuts",
+	"description": "This extension adds shortcuts to bgtorrentz.net",
+	"version": "2.0",
+		
+	"background": {
+		"persistent": false,
+		"scripts": ["background.js"]
+	},
+	
+	"permissions": [
+		"tabs",
+		"storage",
+		"*://bgtorrentz.net/*",
+		"*://bgtorrents.info/*"
+	],
+	
+	"content_scripts": [
+		{
+			"matches": ["*://bgtorrentz.net/*", "*://bgtorrents.info/*"],
+			"css": ["/lib/css/jquery-ui-1.10.4.custom.css", "shortcuts.css"],
+			"js": ["/lib/js/jquery-1.11.0.min.js", "lib/js/angular.js", "/lib/js/purl.js", "shortcuts.js", "shortcutsAng.js" ]
+		}
+	],
+	
+	"page_action": {
+		"default_icon": {
+			"16": "icon.png"
+		},
+		"default_popup": "popup.html"
+	}
+}

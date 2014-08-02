@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html ng-app="bgtShortcutsBkgr" ng-csp="">
+<head>
+    <title>Shortcuts Popup</title>
+
+    <link rel="stylesheet" type="text/css" href="lib/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="lib/css/bootstrap-theme.css">
+    <link rel="stylesheet" type="text/css" href="lib/css/jquery-ui-1.10.4.custom.css">
+    <link rel="stylesheet" type="text/css" href="popup.css">
+
+    <script src="lib/js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    <script src="lib/js/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
+    <script src="lib/js/angular.js" type="text/javascript"></script>
+    <script src="lib/js/ui-bootstrap-tpls-0.10.0.js" type="text/javascript"></script>
+    <script src="lib/js/sortable.js" type="text/javascript"></script>
+    <script src="popup.js" type="text/javascript"></script>
+</head>
+<body ng-controller="bgtShortcutsCtrl">
+    <tabset class="tab-container">
+        <tab heading="Highlight">
+            <div class="header-buttons">
+                &nbsp;
+                <a class="top-right" ng-if="highlights.undo.index >= 0" ng-click="highlights.undoRemove()" title="{{highlights.undo.item}}" style="cursor: pointer;">Undo Remove</a>
+            </div>
+            <div class="list hMargin stripe">
+                <div ng-repeat="highlight in highlights.list" class="item">
+                    <div ng-if='highlights.editIndex !== $index'>
+                        <div class="item-text">{{highlight}}</div>
+                        <span class="buttons-edit top-right">
+                            <span class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-pencil" ng-click="highlights.editIndex = $index; highlights.currEdit = highlight;"></span>
+                            </span>
+                            <span class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-trash" ng-click="highlights.remove($index)"></span>
+                            </span>
+                        </span>
+                    </div>
+                    <div ng-if='highlights.editIndex === $index' style="white-space: nowrap;">
+                        <input type="text" class="item-text" ng-model="highlights.currEdit"
+                               ng-class="{ 'error': !highlights.isValid(highlights.currEdit) }"
+                               ng-keyup="$event.keyCode === 13 ? highlights.saveEdit($index) : false" />
+                        <span class="buttons-edit">
+                            <span class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-disk" ng-click="highlights.saveEdit($index)"></span>
+                            </span>
+                            <span class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-close" ng-click="highlights.editIndex = -1"></span>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="addItems">
+                Highlight:
+                <input type="text" class="add-highlight-text" ng-model="highlights.curr"
+                       ng-class="{ 'error': !highlights.isValid(highlights.curr) }"
+                       ng-keyup="$event.keyCode === 13 ? highlights.add() : false"><br />
+                <div class="buttons-add">
+                    <input type="button" class="btn btn-primary" ng-click="highlights.add()" value="Add">&nbsp;
+                    <input type="button" class="btn btn-primary" ng-click="highlights.curr = '';" value="Clear">
+                </div>
+            </div>
+        </tab>
+        <tab heading="Shortcuts">
+            <div class="header-buttons">
+                <a ng-click="showURL = !showURL" style="cursor: pointer;">{{ showURL ? "Hide" : "Show" }} URLs</a>
+                <a class="top-right" ng-if="shortcuts.undo.index >= 0" ng-click="shortcuts.undoRemove()" title="{{shortcuts.undo.item.Name}}" style="cursor: pointer;">Undo Remove</a>
+            </div>
+            <div class="list bottomMargin">
+                <ul ui-sortable="sortableOptions" ng-model="shortcuts.list" class="sort-list">
+                    <li ng-repeat="shortcut in shortcuts.list" class="sort-item item">
+                        {{shortcut.Name}}
+                        <span class="buttons-edit top-right">
+                            <span class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-pencil" ng-click="shortcuts.edit($index)"></span>
+                            </span>
+                            <span class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-trash" ng-click="shortcuts.remove($index)"></span>
+                            </span>
+                        </span>
+                        <p class="url" ng-if="showURL === true">{{shortcut.URL}}</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="addItems">
+                Name: <input type="text" class="add-shortcuts-text" ng-model="shortcuts.curr.Name"><br />
+                URL: <input type="text" class="add-shortcuts-text" ng-model="shortcuts.curr.URL"><br />
+                <div class="buttons-add">
+                    <input type="button" class="btn btn-primary" ng-click="shortcuts.add()" value="{{ shortcuts.find() >= 0 ? 'Update' : 'Add' }}">&nbsp;
+                    <input type="button" class="btn btn-primary" ng-click="shortcuts.clear()" value="Clear">
+                </div>
+            </div>
+        </tab>
+        <tab heading="Position">
+            <div class="position-box">
+                <div class="btn btn-primary top left" ng-class="{ disabled: position.is('top', 'left') }"
+                     ng-disabled="position.is('top', 'left')" ng-click="position.set('top', 'left')">
+                    Top-Right
+                </div>
+                <div class="btn btn-primary top center" ng-class="{ disabled: position.is('top', 'center') }"
+                     ng-disabled="position.is('top', 'center')" ng-click="position.set('top', 'center')">
+                    Top-Center
+                </div>
+                <div class="btn btn-primary top right" ng-class="{ disabled: position.is('top', 'right') }"
+                     ng-disabled="position.is('top', 'right')" ng-click="position.set('top', 'right')">
+                    Top-Left
+                </div>
+                <div class="btn btn-primary middle left" ng-class="{ disabled: position.is('middle', 'left') }"
+                     ng-disabled="position.is('middle', 'left')" ng-click="position.set('middle', 'left')">
+                    Middle-Left
+                </div>
+                <div class="btn btn-primary middle right" ng-class="{ disabled: position.is('middle', 'right') }"
+                     ng-disabled="position.is('middle', 'right')" ng-click="position.set('middle', 'right')">
+                    Middle-Right
+                </div>
+                <div class="btn btn-primary bottom left" ng-class="{ disabled: position.is('bottom', 'left') }"
+                     ng-disabled="position.is('bottom', 'left')" ng-click="position.set('bottom', 'left')">
+                    Bottom-Right
+                </div>
+                <div class="btn btn-primary bottom center" ng-class="{ disabled: position.is('bottom', 'center') }"
+                     ng-disabled="position.is('bottom', 'center')" ng-click="position.set('bottom', 'center')">
+                    Bottom-Center
+                </div>
+                <div class="btn btn-primary bottom right" ng-class="{ disabled: position.is('bottom', 'right') }"
+                     ng-disabled="position.is('bottom', 'right')" ng-click="position.set('bottom', 'right')">
+                    Bottom-Left
+                </div>
+            </div>
+        </tab>
+        <tab heading="Auto Log-In">
+            <div class="header-buttons">
+                <input id="enableAutoLogIn" type="checkbox" ng-model="autoLogIn.enabled" ng-change="autoLogIn.save()" />
+                <label for="enableAutoLogIn">Enable Auto Log-In</label>
+                <a class="top-right" ng-if="autoLogIn.undo.index >= 0" ng-click="autoLogIn.undoRemove()" title="{{autoLogIn.undo.item}}" style="cursor: pointer;">Undo Remove</a>
+            </div>
+            <div class="list hMargin stripe">
+                <div ng-repeat="button in autoLogIn.list" class="item">
+                    <div ng-if='autoLogIn.editIndex !== $index'>
+                        <div class="item-text">{{button}}</div>
+                        <span class="buttons-edit top-right">
+                            <span class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-pencil" ng-click="autoLogIn.editIndex = $index; autoLogIn.currEdit = button;"></span>
+                            </span>
+                            <span class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-trash" ng-click="autoLogIn.remove($index)"></span>
+                            </span>
+                        </span>
+                    </div>
+                    <div ng-if='autoLogIn.editIndex === $index' style="white-space: nowrap;">
+                        <textarea type="text" class="item-textarea" ng-model="autoLogIn.currEdit" rows="5"
+                                  ng-class="{ 'error': !autoLogIn.isValid(autoLogIn.currEdit) }"
+                                  ng-keyup="$event.keyCode === 13 ? autoLogIn.saveEdit($index) : false"></textarea>
+                        <span class="buttons-edit top-right">
+                            <span class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-disk" ng-click="autoLogIn.saveEdit($index)"></span>
+                            </span>
+                            <span class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-close" ng-click="autoLogIn.editIndex = -1"></span>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                Button:<br />
+                <textarea type="text" class="add-autoLogIn-text" ng-model="autoLogIn.curr" rows="5"
+                          ng-class="{ 'error': !autoLogIn.isValid(autoLogIn.curr) }"
+                          ng-keyup="$event.keyCode === 13 ? autoLogIn.add() : false"></textarea><br />
+                <div class="buttons-add">
+                    <input type="button" class="btn btn-primary" ng-click="autoLogIn.add()" value="Add">&nbsp;
+                    <input type="button" class="btn btn-primary" ng-click="autoLogIn.curr = '';" value="Clear">
+                </div>
+            </div>
+        </tab>
+    </tabset>
+</body>
+</html>
