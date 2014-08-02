@@ -151,10 +151,17 @@
             var $this = this;
             this.getLogInOpts_(function(autoLogIn) {
                 if (autoLogIn.enabled === true) {
-                    var loginBtn = $(autoLogIn.list.join(','));
-                    if (loginBtn.length > 0) {
-                        loginBtn.click();
-                        return;
+                    for (var i = 0; i < autoLogIn.list.length; i++) {
+                        var item = autoLogIn.list[i];
+                        var user = $(item.UserSel);
+                        var pass = $(item.PassSel);
+                        var btn = $(item.BtnSel);
+                        if (user.length > 0 && pass.length > 0 && btn.length > 0) {
+                            user.val(item.User);
+                            pass.val(item.Pass);
+                            btn.click();
+                            return;
+                        }
                     }
                 }
                 func.call($this);

@@ -50,7 +50,7 @@
                     </div>
                 </div>
             </div>
-            <div class="addItems">
+            <div class="align-right">
                 Highlight:
                 <input type="text" class="add-highlight-text" ng-model="highlights.curr"
                        ng-class="{ 'error': !highlights.isValid(highlights.curr) }"
@@ -82,12 +82,12 @@
                     </li>
                 </ul>
             </div>
-            <div class="addItems">
+            <div class="align-right">
                 Name: <input type="text" class="add-shortcuts-text" ng-model="shortcuts.curr.Name"><br />
                 URL: <input type="text" class="add-shortcuts-text" ng-model="shortcuts.curr.URL"><br />
                 <div class="buttons-add">
                     <input type="button" class="btn btn-primary" ng-click="shortcuts.add()" value="{{ shortcuts.find() >= 0 ? 'Update' : 'Add' }}">&nbsp;
-                    <input type="button" class="btn btn-primary" ng-click="shortcuts.clear()" value="Clear">
+                    <input type="button" class="btn btn-primary" ng-click="shortcuts.clear()" value="{{ shortcuts.find() >= 0 ? 'Cancel' : 'Clear' }}">
                 </div>
             </div>
         </tab>
@@ -134,41 +134,40 @@
                 <a class="top-right" ng-if="autoLogIn.undo.index >= 0" ng-click="autoLogIn.undoRemove()" title="{{autoLogIn.undo.item}}" style="cursor: pointer;">Undo Remove</a>
             </div>
             <div class="list hMargin stripe">
-                <div ng-repeat="button in autoLogIn.list" class="item">
-                    <div ng-if='autoLogIn.editIndex !== $index'>
-                        <div class="item-text">{{button}}</div>
-                        <span class="buttons-edit top-right">
-                            <span class="ui-state-default ui-corner-all">
-                                <span class="ui-icon ui-icon-pencil" ng-click="autoLogIn.editIndex = $index; autoLogIn.currEdit = button;"></span>
-                            </span>
-                            <span class="ui-state-default ui-corner-all">
-                                <span class="ui-icon ui-icon-trash" ng-click="autoLogIn.remove($index)"></span>
-                            </span>
+                <div ng-repeat="item in autoLogIn.list" class="item">
+                    <div class="item-text">{{item.Name}}</div>
+                    <span class="buttons-edit top-right">
+                        <span class="ui-state-default ui-corner-all">
+                            <span class="ui-icon ui-icon-pencil" ng-click="autoLogIn.edit($index)"></span>
                         </span>
-                    </div>
-                    <div ng-if='autoLogIn.editIndex === $index' style="white-space: nowrap;">
-                        <textarea type="text" class="item-textarea" ng-model="autoLogIn.currEdit" rows="5"
-                                  ng-class="{ 'error': !autoLogIn.isValid(autoLogIn.currEdit) }"
-                                  ng-keyup="$event.keyCode === 13 ? autoLogIn.saveEdit($index) : false"></textarea>
-                        <span class="buttons-edit top-right">
-                            <span class="ui-state-default ui-corner-all">
-                                <span class="ui-icon ui-icon-disk" ng-click="autoLogIn.saveEdit($index)"></span>
-                            </span>
-                            <span class="ui-state-default ui-corner-all">
-                                <span class="ui-icon ui-icon-close" ng-click="autoLogIn.editIndex = -1"></span>
-                            </span>
+                        <span class="ui-state-default ui-corner-all">
+                            <span class="ui-icon ui-icon-trash" ng-click="autoLogIn.remove($index)"></span>
                         </span>
-                    </div>
+                    </span>
                 </div>
             </div>
-            <div>
-                Button:<br />
-                <textarea type="text" class="add-autoLogIn-text" ng-model="autoLogIn.curr" rows="5"
-                          ng-class="{ 'error': !autoLogIn.isValid(autoLogIn.curr) }"
-                          ng-keyup="$event.keyCode === 13 ? autoLogIn.add() : false"></textarea><br />
+            <div class="align-right">
+                Name:
+                <input type="text" class="add-autoLogIn-text" ng-model="autoLogIn.curr.Name"
+                       ng-class="{ 'error': autoLogIn.check(autoLogIn.curr.Name) }"><br />
+                Username:
+                <input type="text" class="add-autoLogIn-text" ng-model="autoLogIn.curr.User"
+                       ng-class="{ 'error': autoLogIn.check(autoLogIn.curr.User) }"><br />
+                Password:
+                <input type="text" class="add-autoLogIn-text" ng-model="autoLogIn.curr.Pass"
+                       ng-class="{ 'error': autoLogIn.check(autoLogIn.curr.Pass) }"><br />
+                <span>User Input:</span>
+                <textarea type="text" class="add-autoLogIn-text" ng-model="autoLogIn.curr.UserSel" rows="3"
+                          ng-class="{ 'error': autoLogIn.check(autoLogIn.curr.UserSel) }"></textarea><br />
+                <span>Pass Input:</span>
+                <textarea type="text" class="add-autoLogIn-text" ng-model="autoLogIn.curr.PassSel" rows="3"
+                          ng-class="{ 'error': autoLogIn.check(autoLogIn.curr.PassSel) }"></textarea><br />
+                <span>Button:</span>
+                <textarea type="text" class="add-autoLogIn-text" ng-model="autoLogIn.curr.BtnSel" rows="3"
+                          ng-class="{ 'error': autoLogIn.check(autoLogIn.curr.BtnSel) }"></textarea><br />
                 <div class="buttons-add">
-                    <input type="button" class="btn btn-primary" ng-click="autoLogIn.add()" value="Add">&nbsp;
-                    <input type="button" class="btn btn-primary" ng-click="autoLogIn.curr = '';" value="Clear">
+                    <input type="button" class="btn btn-primary" ng-click="autoLogIn.add()" value="{{ autoLogIn.find() >= 0 ? 'Update' : 'Add' }}">&nbsp;
+                    <input type="button" class="btn btn-primary" ng-click="autoLogIn.clear()" value="{{ autoLogIn.find() >= 0 ? 'Cancel' : 'Clear' }}">
                 </div>
             </div>
         </tab>

@@ -13,7 +13,7 @@ angular.module('bgtShortcutsBkgr', ['ui.bootstrap', 'ui.sortable']).controller('
         curr: "",
         currEdit: "",
         editIndex: -1,
-        undo: { index: -1, item: {} },
+        undo: { index: -1, item: null },
 
         load: function() {
             chrome.storage.local.get('highlights', function(items) {
@@ -62,11 +62,6 @@ angular.module('bgtShortcutsBkgr', ['ui.bootstrap', 'ui.sortable']).controller('
             this.editIndex = -1;
         },
 
-        edit: function(i) {
-            if (i < 0 && i >= this.list.length) return;
-            this.curr = this.list[i];
-        },
-
         remove: function(i) {
             if (i < 0 && i >= this.list.length) return;
 
@@ -79,6 +74,7 @@ angular.module('bgtShortcutsBkgr', ['ui.bootstrap', 'ui.sortable']).controller('
 
             this.list.splice(this.undo.index, 0, this.undo.item);
             this.undo.index = -1;
+            this.undo.item = null;
             this.save();
         },
 
@@ -98,7 +94,7 @@ angular.module('bgtShortcutsBkgr', ['ui.bootstrap', 'ui.sortable']).controller('
         list: [],
         curr: { Name: '', URL: '' },
         empty: { Name: '', URL: '' },
-        undo: { index: -1, item: {} },
+        undo: { index: -1, item: null },
 
         load: function() {
             chrome.storage.local.get('shortcuts', function(items) {
@@ -134,15 +130,12 @@ angular.module('bgtShortcutsBkgr', ['ui.bootstrap', 'ui.sortable']).controller('
 
         edit: function(i) {
             if (i < 0 && i >= this.list.length) return;
-            this.curr = {
-                Name: this.list[i].Name,
-                URL: this.list[i].URL
-            };
+            this.curr = angular.copy(this.list[i]);
         },
 
         remove: function(i) {
             if (i < 0 && i >= this.list.length) return;
-            
+
             this.undo = { index: i, item: this.list.splice(i, 1)[0] };
             this.save();
         },
@@ -152,6 +145,7 @@ angular.module('bgtShortcutsBkgr', ['ui.bootstrap', 'ui.sortable']).controller('
 
             this.list.splice(this.undo.index, 0, this.undo.item);
             this.undo.index = -1;
+            this.undo.item = null;
             this.save();
         },
 
@@ -210,10 +204,10 @@ angular.module('bgtShortcutsBkgr', ['ui.bootstrap', 'ui.sortable']).controller('
     $scope.autoLogIn = {
         enabled: false,
         list: [],
-        curr: "",
-        currEdit: "",
-        editIndex: -1,
-        undo: { index: -1, item: {} },
+        curr: { Name: '', User: '', Pass: '', UserSel: '', PassSel: '', BtnSel: '' },
+        empty: { Name: '', User: '', Pass: '', UserSel: '', PassSel: '', BtnSel: '' },
+        undo: { index: -1, item: null },
+        _showError: false,
 
         load: function() {
             chrome.storage.local.get('autoLogIn', function(items) {
@@ -239,43 +233,35 @@ angular.module('bgtShortcutsBkgr', ['ui.bootstrap', 'ui.sortable']).controller('
         },
 
         add: function() {
-            if (this.curr.length === 0 || this.list.indexOf(this.curr) >= 0 || !this.isValid(this.curr)) {
+            if (!this.isValid(this.curr)) {
+                this._showError = true;
                 return;
             }
-
-            this.list.push(this.curr);
+            var i = this.find(this.curr.Name);
+            if (i >= 0) {
+                this.list[i] = this.curr;
+            } else {
+                this.list.push(this.curr);
+            }
             this.list.sort(function(a, b) {
-                return a.toLowerCase().localeCompare(b.toLowerCase());
+                return a.Name.toLowerCase().localeCompare(b.Name.toLowerCase());
             });
 
             this.save();
-            this.curr = "";
-        },
-
-        saveEdit: function(index) {
-            if (this.currEdit.length === 0 || this.list.indexOf(this.currEdit) >= 0 || !this.isValid(this.currEdit)) {
-                return;
-            }
-
-            this.list[index] = this.currEdit;
-            this.list.sort(function(a, b) {
-                return a.toLowerCase().localeCompare(b.toLowerCase());
-            });
-
-            this.save();
-            this.editIndex = -1;
+            this.clear();
         },
 
         edit: function(i) {
             if (i < 0 && i >= this.list.length) return;
-            this.curr = this.list[i];
+            this.curr = angular.copy(this.list[i]);
         },
 
         remove: function(i) {
             if (i < 0 && i >= this.list.length) return;
-            
+
             this.undo = { index: i, item: this.list.splice(i, 1)[0] };
             this.save();
+            this.clear();
         },
 
         undoRemove: function() {
@@ -283,11 +269,34 @@ angular.module('bgtShortcutsBkgr', ['ui.bootstrap', 'ui.sortable']).controller('
 
             this.list.splice(this.undo.index, 0, this.undo.item);
             this.undo.index = -1;
+            this.undo.item = null;
             this.save();
         },
 
-        isValid: function(expr) {
-            return true;// $(expr).length > 0;
+        find: function(name) {
+            if (name === undefined) name = this.curr.Name;
+            for (var i = 0; i < this.list.length; i++) {
+                if (this.list[i].Name === name) return i;
+            }
+            return -1;
+        },
+
+        isValid: function(item) {
+            return item.Name.length > 0 &&
+                item.User.length > 0 &&
+                item.Pass.length > 0 &&
+                item.UserSel.length > 0 &&
+                item.PassSel.length > 0 &&
+                item.BtnSel.length > 0;
+        },
+
+        check: function(item) {
+            return this._showError && item.length === 0;
+        },
+
+        clear: function() {
+            this._showError = false;
+            this.curr = angular.copy(this.empty);
         },
     };
 
