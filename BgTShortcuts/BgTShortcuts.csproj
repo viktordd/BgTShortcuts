@@ -57,6 +57,9 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\css\jquery-ui-1.10.4.custom.css" />
+    <Content Include="lib\js\jquery-1.11.1.min.js" />
+    <Content Include="lib\js\jquery-ui-1.10.4.custom.min.js" />
     <Content Include="manifest.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -85,9 +88,6 @@
     <Content Include="lib\css\images\ui-icons_454545_256x240.png" />
     <Content Include="lib\css\images\ui-icons_888888_256x240.png" />
     <Content Include="lib\css\images\ui-icons_cd0a0a_256x240.png" />
-    <Content Include="lib\js\jquery-1.11.0.min.js" />
-    <Content Include="lib\css\jquery-ui-1.10.4.custom.css" />
-    <Content Include="lib\js\jquery-ui-1.10.4.custom.min.js" />
     <Content Include="shortcutsAng.js" />
     <Content Include="shortcuts.html" />
     <Content Include="popup.css" />

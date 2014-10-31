@@ -21,7 +21,7 @@
 		{
 			"matches": ["*://bgtorrentz.net/*", "*://bgtorrents.info/*"],
 			"css": ["/lib/css/jquery-ui-1.10.4.custom.css", "shortcuts.css"],
-			"js": ["/lib/js/jquery-1.11.0.min.js", "lib/js/angular.js", "/lib/js/purl.js", "shortcuts.js", "shortcutsAng.js" ]
+			"js": ["/lib/js/jquery-1.11.1.min.js", "lib/js/angular.js", "/lib/js/purl.js", "shortcuts.js", "shortcutsAng.js" ]
 		}
 	],
 	
