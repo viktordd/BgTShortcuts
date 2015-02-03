@@ -174,14 +174,14 @@
 		 * @private
 		 */
         getInputAndBtn_: function() {
-            var parent = $('#glype');
-            if (parent.length === 0) {
+            var parent = $('#webproxyform');
+            if (parent.length === 0) { //bgtorrentz.info
                 parent = $('body > div#include');
 
                 this.url_ = parent.find('input:text[name=u]');
                 this.btn_ = parent.find('input:submit[value=Go]');
-            } else {
-                this.url_ = parent.find('input:text#input');
+            } else {//bgtorrentz.net
+                this.url_ = parent.find('input:text[name=u]');
                 this.btn_ = parent.find('input:submit[value=Open]');
             }
         },
@@ -275,6 +275,11 @@
 		 * @private
 		 */
         setURL_: function(shortcut, save, force) {
+            var url = $.url();
+            if (url.attr('host') === "bgtorrentz.net" && url.attr('directory') !== "/zamunda-net/") {
+                this.setCurrShortcut_(shortcut);
+                location.replace("http://bgtorrentz.net/zamunda-net/");
+            }
             if (force === true || shortcut.URL !== this.url_.val()) {
                 if (save) {
                     this.setCurrShortcut_(shortcut);
